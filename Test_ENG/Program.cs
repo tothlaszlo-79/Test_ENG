@@ -1,0 +1,36 @@
+using Microsoft.EntityFrameworkCore;
+using Test_ENG.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+ConfigurationManager Configuration = builder.Configuration;
+//dbcontext to use postgresql
+builder.Services.AddDbContext<TestDbContext>(options =>
+    options.UseNpgsql(Configuration["ConnectionStrings:TestDbConnection"]));
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Run();
